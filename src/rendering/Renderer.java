@@ -8,6 +8,7 @@ import java.awt.geom.Line2D;
 
 import physics.Body;
 import physics.Edge;
+import physics.Vector2d;
 
 public class Renderer {
     
@@ -20,6 +21,12 @@ public class Renderer {
             g.setColor(e.color);
             g.setStroke(new BasicStroke(e.thickness));
             g.draw(new Line2D.Double(e.p1.x, e.p1.y, e.p2.x, e.p2.y));
+        }
+        
+        for (Vector2d p : body.points) {
+            g.setColor(p.color);
+            int diam = p.thickness;
+            g.fillOval((int)(p.x - diam/2), (int)(p.y - diam/2), diam, diam);
         }
     }
 

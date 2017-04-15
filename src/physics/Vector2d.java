@@ -6,7 +6,10 @@ public class Vector2d {
     
     public double x;
     public double y;
-    public Color color;
+    
+    // render stuff
+    public Color color = Color.RED;
+    public int thickness = 10;
     
     public Vector2d(double x, double y) {
         this.x = x;

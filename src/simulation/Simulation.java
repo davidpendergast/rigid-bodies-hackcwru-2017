@@ -18,7 +18,7 @@ public class Simulation {
         Vector2d v2 = new Vector2d(30, 60);
         Edge e = new Edge(v1, v2);
         
-        b.edges.add(e);
+        b.add(e);
         
         Window window = new Window(600, 400);
         

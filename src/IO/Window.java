@@ -17,21 +17,25 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Window extends JFrame {
+public class Window {
 
     public BufferedImage[] canvas = new BufferedImage[] { null }; // lel
+    public JFrame frame;
     public JPanel panel;
     public JPanel imagePanel;
     public JPanel toolPanel;
 
     public Window(int width, int height) {
 
-        JFrame frame = new JFrame("Rigid Body Simulator - HackCWRU 2017");
+        frame = new JFrame("Rigid Body Simulator - HackCWRU 2017");
+        
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
         JLabel label = new JLabel("This is a label!");
         panel.add(label, BorderLayout.SOUTH);
+        
+        canvas[0] = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         
         imagePanel = new JPanel() {
 
@@ -62,6 +66,10 @@ public class Window extends JFrame {
             return (Graphics2D) image.getGraphics();
         }
         return null;
+    }
+    
+    public void repaint() {
+        frame.repaint();
     }
 
     public Dimension imageSize() {

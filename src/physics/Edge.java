@@ -8,7 +8,7 @@ public class Edge {
     
     // rendering stuff
     public Color color = Color.BLACK;
-    public int thickness = 5;
+    public int thickness = 3;
     
     public Edge(Vector2d p1, Vector2d p2) {
         this.p1 = p1;

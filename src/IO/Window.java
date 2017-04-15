@@ -18,6 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class Window {
+    
+    public State state;
 
     public BufferedImage[] canvas = new BufferedImage[] { null }; // lel
     public JFrame frame;
@@ -25,8 +27,9 @@ public class Window {
     public JPanel imagePanel;
     public JPanel toolPanel;
 
-    public Window(int width, int height) {
-
+    public Window(State state, int width, int height) {
+        this.state = state;
+        
         frame = new JFrame("Rigid Body Simulator - HackCWRU 2017");
         
         panel = new JPanel();
@@ -74,10 +77,6 @@ public class Window {
 
     public Dimension imageSize() {
         return imagePanel.getSize();
-    }
-
-    public static void main(String[] args) {
-        Window window = new Window(600, 400);
     }
 
 }

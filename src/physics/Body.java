@@ -6,15 +6,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Body {
     
-    public Set<Vector2d> points;
     public List<Edge> edges;
     public Map<Vector2d, List<Edge>> adj;
     
     public Body() {
-        points = new HashSet<Vector2d>();
         edges = new ArrayList<Edge>();
         adj = new HashMap<Vector2d, List<Edge>>();
     }
@@ -26,14 +25,19 @@ public class Body {
     }
     
     public void add(Vector2d point) {
-        points.add(point);
         if (!adj.containsKey(point)) {
             adj.put(point, new ArrayList<Edge>());
         }
     }
     
     public List<Vector2d> neighbors(Vector2d point) {
-        return null;
+        if (adj.containsKey(point)) {
+            return adj.get(point).stream()
+                    .map(e -> e.other(point))
+                    .collect(Collectors.toList());
+        }
+        
+        throw new IllegalArgumentException("point not in body");
     }
 
 }

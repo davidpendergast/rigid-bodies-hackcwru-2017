@@ -8,7 +8,7 @@ public class Vector2d {
     public double y;
     
     // render stuff
-    public Color color = Color.RED;
+    public Color color = Color.BLACK;
     public int thickness = 10;
     
     public Vector2d(double x, double y) {

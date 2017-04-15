@@ -36,4 +36,18 @@ public class Edge {
     public double minY() {
         return Math.min(p1.y, p2.y);
     }
+    
+    public Vector2d other(Vector2d p) {
+        if (p == p1) {
+            return p2;
+        } else if (p == p2) {
+            return p1;
+        }
+        
+        throw new IllegalArgumentException("p not in edge.");
+    }
+    
+    public String toString() {
+        return "Edge:" + p1 + " " + p2;
+    }
 }

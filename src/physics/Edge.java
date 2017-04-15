@@ -15,6 +15,25 @@ public class Edge {
         this.p2 = p2;
     }
     
+    public double length() {
+        double dx = p2.x - p1.x;
+        double dy = p2.y - p1.y;
+        return Math.sqrt(dx*dx + dy*dy);
+    }
     
-
+    public double maxX() {
+        return Math.max(p1.x, p2.x);
+    }
+    
+    public double minX() {
+        return Math.min(p1.x, p2.x);
+    }
+    
+    public double maxY() {
+        return Math.max(p1.y, p2.y);
+    }
+    
+    public double minY() {
+        return Math.min(p1.y, p2.y);
+    }
 }

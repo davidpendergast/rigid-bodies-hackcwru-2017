@@ -38,7 +38,7 @@ public class Window {
     public JPanel toolPanel;
     
     public int moveSpeed = 3;
-    public int stretchSpeed = 6;
+    public double stretchSpeed = 0.5;
     
     public Point mouseDownPos = null;
     public Point mouseCurrPos = null;

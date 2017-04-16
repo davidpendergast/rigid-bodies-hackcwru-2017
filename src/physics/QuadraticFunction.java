@@ -1,6 +1,6 @@
 package physics;
 
-public class QuadraticFunction {
+public class QuadraticFunction implements Func {
     public int n;
     public double[][] quadTerms;
     public double constantTerm = 0;

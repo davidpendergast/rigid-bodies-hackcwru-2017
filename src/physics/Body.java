@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 public class Body {
     
+    public static boolean USE_SPRINGS = false;
+    
     public List<Edge> edges;
     public Map<Vector2d, Set<Edge>> toEdge;
     public Map<Vector2d, Set<Vector2d>> adj;
@@ -86,35 +88,33 @@ public class Body {
     public void stretch(Edge e, double delta) {
         double currLen = e.length();
         preferedLengths.put(e, currLen + delta);
-//        if (e.length() + delta <= 0) {
-//            return false;
-//        } else {
-//            double currLength = e.length();
-//
-//            refreshPreferedLengths();
-//            preferedLengths.put(e, currLength + delta);
-//            QuadraticFunction[] f = getConstraintFunctions();
-//            int n = points().size();
-//            double[] x0 = new double[n * 2];
-//            for (Vector2d p : points()) {
-//                int vari = id.get(p);
-//                x0[vari] = p.x;
-//                x0[vari + n] = p.y;
-//            }
-//            double[] x = Newton.solve(50, f, x0);
-//            System.out.println("x0 = " + Arrays.toString(x0));
-//            System.out.println("x = " + Arrays.toString(x));
-//            for (Vector2d p : points()) {
-//                int vari = id.get(p);
-//                p.x = x[vari];
-//                p.y = x[vari + n];
-//            }
-//            
-//            return true;
-//        }
+        
+        if (!USE_SPRINGS) {
+            QuadraticFunction[] f = getConstraintFunctions();
+            int n = points().size();
+            double[] x0 = new double[n * 2];
+            for (Vector2d p : points()) {
+                int i = id.get(p);
+                x0[i] = p.x;
+                x0[i + n] = p.y;
+            }
+            double[] soln = FuncSystemSolver.solve(f, x0);
+            if (FuncSystemSolver.err(f, soln) > 1) {
+                // bad solution, not doing anything.
+            } else {
+                for (Vector2d p : points()) {
+                    int i = id.get(p);
+                    p.x = soln[i];
+                    p.y = soln[i + n];
+                }
+            }
+        }
     }
     
     public void update(double scale) {
+        if (!USE_SPRINGS) {
+            return;
+        }
         List<Vector2d> myGuys = new ArrayList<Vector2d>();
         myGuys.addAll(points());
         Collections.shuffle(myGuys);

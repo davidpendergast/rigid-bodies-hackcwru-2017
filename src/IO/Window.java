@@ -8,12 +8,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -34,6 +36,12 @@ public class Window {
     public JPanel panel;
     public JPanel imagePanel;
     public JPanel toolPanel;
+    
+    public int moveSpeed = 3;
+    public int stretchSpeed = 6;
+    
+    public Point mouseDownPos = null;
+    public Point mouseCurrPos = null;
 
     public Window(State state, int width, int height) {
         this.state = state;
@@ -95,7 +103,11 @@ public class Window {
 
             @Override
             public void mousePressed(MouseEvent e) {
+                mouseDownPos = e.getPoint();
                 Vector2d pos = new Vector2d(e.getX(), e.getY());
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    state.body.add(pos);
+                }
                 System.out.println("Woah! Clicked at: " +pos);
                 List<Vector2d> clickedPoints = state.body.pointsAt(pos, 10);
                 if (!clickedPoints.isEmpty() && !e.isControlDown()) {
@@ -112,6 +124,27 @@ public class Window {
                     }
                 }
             }    
+            
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                Point downPos = mouseDownPos;
+                mouseDownPos = null;
+                Point releasePos = e.getPoint();
+                
+                if (downPos != null) {
+                    List<Vector2d> clickedPoints = state.body.pointsAt(
+                            new Vector2d(downPos.getX(), downPos.getY()), 10);
+                    List<Vector2d> releasePoints = state.body.pointsAt(
+                            new Vector2d(releasePos.getX(), releasePos.getY()), 10);
+                    
+                    if (!clickedPoints.isEmpty() && !releasePoints.isEmpty()) {
+                        Vector2d p1 = clickedPoints.get(0);
+                        Vector2d p2 = releasePoints.get(0);
+                        Edge edge = new Edge(p1, p2);
+                        state.body.add(edge);
+                    }
+                }
+            }
         });
         
         frame.addKeyListener(new KeyListener() {
@@ -128,23 +161,23 @@ public class Window {
                 Vector2d selP = state.selectedPoint;
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
                     if (selE != null) {
-                        state.body.stretch(selE, 1.0);
+                        state.body.stretch(selE, stretchSpeed);
                     } else if (selP != null) {
                         selP.y = (int)(selP.y - 1);
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                     if (selE != null) {
-                        state.body.stretch(selE, -1.0);
+                        state.body.stretch(selE, -stretchSpeed);
                     } else if (selP != null) {
-                        selP.y = (int)(selP.y + 1);
+                        selP.y = (int)(selP.y + moveSpeed);
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     if (selP != null) {
-                        selP.x = (int)(selP.x + 1);
+                        selP.x = (int)(selP.x + moveSpeed);
                     }
                 }  else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     if (selP != null) {
-                        selP.x = (int)(selP.x - 1);
+                        selP.x = (int)(selP.x - moveSpeed);
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (selP != null) {
@@ -155,6 +188,21 @@ public class Window {
 
             @Override
             public void keyReleased(KeyEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
+        
+        imagePanel.addMouseMotionListener(new MouseMotionListener() {
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                mouseCurrPos = e.getPoint();
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
                 // TODO Auto-generated method stub
                 
             }

@@ -48,12 +48,6 @@ public class Body {
         adj.get(edge.p1).add(edge.p2);
         adj.get(edge.p2).add(edge.p1);
     }
-    
-    private void refreshPreferedLengths() {
-        for (Edge e : edges) {
-            preferedLengths.put(e, e.length());
-        }
-    }
 
     public void add(Vector2d point) {
         if (!adj.containsKey(point)) {
@@ -90,7 +84,7 @@ public class Body {
     }
     
     public void stretch(Edge e, double delta) {
-        double currLen = preferedLengths.get(e);
+        double currLen = e.length();
         preferedLengths.put(e, currLen + delta);
 //        if (e.length() + delta <= 0) {
 //            return false;
@@ -132,10 +126,15 @@ public class Body {
                 Vector2d correction = new Vector2d(0, 0);
                 for (Edge e : toEdge.get(p)) {
                     double err = getError(e);
-                    if (Math.abs(err) > VecMath.EPS) {
+                    if (Math.abs(err) > 0.5) {
                         Vector2d other = e.other(p);
-                        correction = VecMath.add(correction, VecMath.mult(VecMath.sub(other, p), -err * scale / (2*e.length())));
+                        Vector2d dir = VecMath.mult(VecMath.sub(other, p), 1.0 / e.length());
+                        correction = VecMath.add(correction, VecMath.mult(dir, -err * scale / 2));
                     }
+                }
+                double mag = VecMath.mag(correction);
+                if (mag > 5) {
+                    correction = VecMath.mult(correction, 2 / mag);
                 }
                 newPos.put(p, VecMath.add(p, correction));
             }

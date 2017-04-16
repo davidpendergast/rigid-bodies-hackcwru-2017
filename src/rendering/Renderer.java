@@ -14,7 +14,7 @@ import physics.Vector2d;
 
 public class Renderer {
     
-    public static Color SELECTED_COLOR = Color.RED;
+    public static Color SELECTED_COLOR = Color.BLUE.brighter();
     public static Color FIXED_COLOR = Color.GREEN;
     
     public static void render(Graphics2D g, RenderOptions options, State state) {
@@ -23,17 +23,21 @@ public class Renderer {
         g.fillRect(0, 0, 
                 options.drawRect.width, options.drawRect.height);
   
-        
         int xOffs = options.drawRect.x;
         int yOffs = options.drawRect.y;
-        
-        //Set<Vector2d> currentFixed = state.body.getDerivedFixedPoints();
         
         for (Edge e : body.edges) {
             if (state.selectedEdge == e) {
                 g.setColor(SELECTED_COLOR);
             } else {
-                g.setColor(e.color);
+                double err = Math.abs(state.body.getError(e));
+                if (err > 10) {
+                    err = 10;
+                }
+                
+                err = err / 10.0;
+                Color c = new Color((int)(255*err), (int)(255*(1-err)), 0);
+                g.setColor(c);
             }
             g.setStroke(new BasicStroke(e.thickness));
             g.draw(new Line2D.Double(e.p1.x - xOffs, e.p1.y - yOffs, 

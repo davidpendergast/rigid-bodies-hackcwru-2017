@@ -136,7 +136,7 @@ public class Window {
                     if (selE != null) {
                         state.body.stretch(selE, -1.0);
                     } else if (selP != null) {
-                        selP.y = (int)(selP.y - 1);
+                        selP.y = (int)(selP.y + 1);
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     if (selP != null) {

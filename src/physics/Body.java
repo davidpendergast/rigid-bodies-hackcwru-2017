@@ -2,6 +2,7 @@ package physics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,8 @@ public class Body {
         preferedLengths.put(edge, edge.length());
         add(edge.p1);
         add(edge.p2);
+        toEdge.get(edge.p1).add(edge);
+        toEdge.get(edge.p2).add(edge);
         adj.get(edge.p1).add(edge.p2);
         adj.get(edge.p2).add(edge.p1);
     }
@@ -86,33 +89,66 @@ public class Body {
         .collect(Collectors.toList());   
     }
     
-    public boolean stretch(Edge e, double delta) {
-        if (e.length() + delta <= 0) {
-            return false;
-        } else {
-            double currLength = e.length();
-
-            refreshPreferedLengths();
-            preferedLengths.put(e, currLength + delta);
-            QuadraticFunction[] f = getConstraintFunctions();
-            int n = points().size();
-            double[] x0 = new double[n * 2];
-            for (Vector2d p : points()) {
-                int vari = id.get(p);
-                x0[vari] = p.x;
-                x0[vari + n] = p.y;
+    public void stretch(Edge e, double delta) {
+        double currLen = preferedLengths.get(e);
+        preferedLengths.put(e, currLen + delta);
+//        if (e.length() + delta <= 0) {
+//            return false;
+//        } else {
+//            double currLength = e.length();
+//
+//            refreshPreferedLengths();
+//            preferedLengths.put(e, currLength + delta);
+//            QuadraticFunction[] f = getConstraintFunctions();
+//            int n = points().size();
+//            double[] x0 = new double[n * 2];
+//            for (Vector2d p : points()) {
+//                int vari = id.get(p);
+//                x0[vari] = p.x;
+//                x0[vari + n] = p.y;
+//            }
+//            double[] x = Newton.solve(50, f, x0);
+//            System.out.println("x0 = " + Arrays.toString(x0));
+//            System.out.println("x = " + Arrays.toString(x));
+//            for (Vector2d p : points()) {
+//                int vari = id.get(p);
+//                p.x = x[vari];
+//                p.y = x[vari + n];
+//            }
+//            
+//            return true;
+//        }
+    }
+    
+    public void update(double scale) {
+        List<Vector2d> myGuys = new ArrayList<Vector2d>();
+        myGuys.addAll(points());
+        Collections.shuffle(myGuys);
+        Map<Vector2d,Vector2d> newPos = new HashMap<Vector2d,Vector2d>();
+        for (Vector2d p : myGuys) {
+            if (p.fixed) {
+                newPos.put(p, p);
+            } else {
+                Vector2d correction = new Vector2d(0, 0);
+                for (Edge e : toEdge.get(p)) {
+                    double err = getError(e);
+                    if (Math.abs(err) > VecMath.EPS) {
+                        Vector2d other = e.other(p);
+                        correction = VecMath.add(correction, VecMath.mult(VecMath.sub(other, p), -err * scale / (2*e.length())));
+                    }
+                }
+                newPos.put(p, VecMath.add(p, correction));
             }
-            double[] x = Newton.solve(50, f, x0);
-            System.out.println("x0 = " + Arrays.toString(x0));
-            System.out.println("x = " + Arrays.toString(x));
-            for (Vector2d p : points()) {
-                int vari = id.get(p);
-                p.x = x[vari];
-                p.y = x[vari + n];
-            }
-            
-            return true;
         }
+        
+        for(Vector2d p : newPos.keySet()) {
+            p.x = newPos.get(p).x;
+            p.y = newPos.get(p).y;
+        }
+    }
+    
+    public double getError(Edge e) {
+        return preferedLengths.get(e) - e.length();
     }
     
     public Set<Vector2d> getFixedPoints() {

@@ -24,7 +24,7 @@ public class Simulation {
         
         state.body.add(new Edge(v1, v2));
         state.body.add(new Edge(v1, v3));
-        state.body.add(new Edge(v1, v4));
+        //state.body.add(new Edge(v1, v4));
         state.body.add(new Edge(v2, v4));
         state.body.add(new Edge(v3, v4));
         
@@ -36,6 +36,7 @@ public class Simulation {
             Graphics2D g = window.getGraphics();
             Renderer.render(g, opts, state);
             window.repaint();
+            state.body.update(1.0);
         }
     }
     

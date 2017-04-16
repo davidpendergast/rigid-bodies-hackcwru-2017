@@ -6,7 +6,7 @@ import Jama.Matrix;
 
 public class FuncSystemSolver {
     
-    public static int iters = 500;
+    public static int iters = 50;
     
     /**
      * Returns the vector x that minimizes the magnitude of 

@@ -36,6 +36,12 @@ public class Body {
         return res;
     }
     
+    public void updatePreferedLengths() {
+        for (Edge e : edges) {
+            preferedLengths.put(e, e.length());
+        }
+    }
+    
     public Set<Vector2d> points() {
         return adj.keySet();
     }
@@ -108,6 +114,8 @@ public class Body {
                     p.y = soln[i + n];
                 }
             }
+            
+            updatePreferedLengths();
         }
     }
     

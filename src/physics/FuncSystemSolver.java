@@ -6,7 +6,7 @@ import Jama.Matrix;
 
 public class FuncSystemSolver {
     
-    public static int iters = 50;
+    public static int iters = 500;
     
     /**
      * Returns the vector x that minimizes the magnitude of 
@@ -14,7 +14,7 @@ public class FuncSystemSolver {
      */
     public static double[] solve(Func[] f, final double[] x0) {
         double err = err(f, x0);
-        System.out.println("initial err = " + err);
+        //System.out.println("initial err = " + err);
         
         int n = f.length;
         Func[] f_copy = new Func[n + x0.length];
@@ -22,7 +22,7 @@ public class FuncSystemSolver {
             f_copy[i] = f[i];
         }
         f = f_copy;
-        final double weight = 0.000001;
+        final double weight = 0.0001;
         // adding closeness to x0 constraints.
         for (int i = n; i < f.length; i++) {
             final int j = i;
@@ -32,6 +32,9 @@ public class FuncSystemSolver {
         Func[][] Df = D(f, x0.length, 0.0001);
         
         double[] x = Arrays.copyOf(x0, x0.length);
+        for (int i = 0; i < x.length; i++) {
+            x[i] += (Math.random()-0.5)*0.001;
+        }
         for (int i = 0; i < iters; i++) {
             Matrix Df_mat = eval(Df, x);
             Matrix f_mat = eval(f, x);
@@ -43,9 +46,10 @@ public class FuncSystemSolver {
                 x[j] += x_delta.get(j, 0);
             }
             
-            System.out.println("iteration "+i+" err = "+err(f, x));
+            // System.out.println("iteration "+i+" err = "+err(f, x));
         }
         
+        System.out.println("err = "+err(f, x));
         return x;
     }
     
@@ -76,6 +80,7 @@ public class FuncSystemSolver {
     public static double err(Func[] f, double[] x) {
         double sum = 0;
         for (Func function : f) {
+            //System.out.println("f(x) = " + Math.abs(function.eval(x))+ " = " + function);
             sum += Math.abs(function.eval(x));
         }
         return sum;
@@ -103,13 +108,13 @@ public class FuncSystemSolver {
         return Df;
     }
     
-    public static void main(String[] args) {
-        Func f1 = x -> x[0]*x[2] - x[1]*3 + 2;
-        Func f2 = x -> 7*x[0]*x[0]*x[2] + x[1]*x[0] + 4;
-        
-        Func[] f = {f1, f2};
-        double[] x0 = {100,1, 1};
-        double[] x = solve(f, x0);
-        System.out.println(Arrays.toString(x));
-    }
+//    public static void main(String[] args) {
+//        Func f1 = x -> x[0]*x[2] - x[1]*3 + 2;
+//        Func f2 = x -> 7*x[0]*x[0]*x[2] + x[1]*x[0] + 4;
+//        
+//        Func[] f = {f1, f2};
+//        double[] x0 = {100,1, 1};
+//        double[] x = solve(f, x0);
+//        System.out.println(Arrays.toString(x));
+//    }
 }

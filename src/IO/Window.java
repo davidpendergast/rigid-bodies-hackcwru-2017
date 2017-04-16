@@ -131,7 +131,7 @@ public class Window {
                 mouseDownPos = null;
                 Point releasePos = e.getPoint();
                 
-                if (downPos != null) {
+                if (downPos != null && e.getButton() == MouseEvent.BUTTON1) {
                     List<Vector2d> clickedPoints = state.body.pointsAt(
                             new Vector2d(downPos.getX(), downPos.getY()), 10);
                     List<Vector2d> releasePoints = state.body.pointsAt(

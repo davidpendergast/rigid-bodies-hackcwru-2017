@@ -27,7 +27,7 @@ public class Renderer {
         int xOffs = options.drawRect.x;
         int yOffs = options.drawRect.y;
         
-        Set<Vector2d> currentFixed = state.body.getDerivedFixedPoints();
+        //Set<Vector2d> currentFixed = state.body.getDerivedFixedPoints();
         
         for (Edge e : body.edges) {
             if (state.selectedEdge == e) {
@@ -43,8 +43,9 @@ public class Renderer {
         for (Vector2d p : body.adj.keySet()) {
             if (state.selectedPoint == p) {
                 g.setColor(SELECTED_COLOR);
-            } else if (currentFixed.contains(p)){
+            //} //else if (currentFixed.contains(p)){
                 g.setColor(FIXED_COLOR);
+            //} 
             } else {
                 g.setColor(p.color());
             }

@@ -17,14 +17,18 @@ public class Simulation {
         State state = new State();
         
         state.body = new Body();
-        Vector2d v1 = new Vector2d(50, 20);
-        Vector2d v2 = new Vector2d(30, 60);
-        Edge e = new Edge(v1, v2);
+        Vector2d v1 = new Vector2d(90, 300);
+        Vector2d v2 = new Vector2d(200, 300);
+        Vector2d v3 = new Vector2d(90, 250);
+        Vector2d v4 = new Vector2d(150, 250);
         
-        state.body.add(e);
+        state.body.add(new Edge(v1, v2));
+        state.body.add(new Edge(v1, v3));
+        state.body.add(new Edge(v1, v4));
+        state.body.add(new Edge(v2, v4));
+        state.body.add(new Edge(v3, v4));
         
         Window window = new Window(state, 600, 400);
-        
         RenderOptions opts = new RenderOptions();
         
         while (true) {
@@ -39,8 +43,7 @@ public class Simulation {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            
         }
     }
 

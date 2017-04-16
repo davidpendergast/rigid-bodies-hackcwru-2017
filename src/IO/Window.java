@@ -10,12 +10,20 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import physics.Edge;
+import physics.Vector2d;
 
 public class Window {
     
@@ -60,6 +68,9 @@ public class Window {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        addListeners();
+        
         frame.setVisible(true);
     }
 
@@ -77,6 +88,55 @@ public class Window {
 
     public Dimension imageSize() {
         return imagePanel.getSize();
+    }
+    
+    private void addListeners() {
+        imagePanel.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                Vector2d pos = new Vector2d(e.getX(), e.getY());
+                List<Edge> clickedEdges = state.body.edgesAt(pos, 10);
+                System.out.println("Woah! Clicked at: " +pos);
+                if (!clickedEdges.isEmpty()) {
+                    System.out.println("Clicked on edges: " +clickedEdges);
+                    state.selectedEdge = clickedEdges.get(0);
+                } else {
+                    state.selectedEdge = null;
+                }
+            }
+            
+        });
+        
+        frame.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                Edge sel = state.selectedEdge;
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    if (sel != null) {
+                        state.body.stretch(sel, 1.0);
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    if (sel != null) {
+                        state.body.stretch(sel, -1.0);
+                    }
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
     }
 
 }

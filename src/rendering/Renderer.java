@@ -31,7 +31,6 @@ public class Renderer {
             } else {
                 g.setColor(e.color);
             }
-            g.setColor(e.color);
             g.setStroke(new BasicStroke(e.thickness));
             g.draw(new Line2D.Double(e.p1.x - xOffs, e.p1.y - yOffs, 
                     e.p2.x - xOffs, e.p2.y - yOffs));

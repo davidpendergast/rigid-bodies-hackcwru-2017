@@ -47,6 +47,10 @@ public class Edge {
         throw new IllegalArgumentException("p not in edge.");
     }
     
+    public Vector2d midpoint() {
+        return VecMath.midpoint(p1, p2);
+    }
+    
     public String toString() {
         return "Edge:" + p1 + " " + p2;
     }

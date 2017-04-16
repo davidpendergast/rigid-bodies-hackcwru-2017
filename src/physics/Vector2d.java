@@ -17,7 +17,11 @@ public class Vector2d {
     }
     
     public String toString() {
-        return "(" + x + ", " + y + ")";
+        return "(" + format(x) + ", " + format(y) + ")";
+    }
+    
+    private static String format(double num) {
+        return String.format("%.1f", num);
     }
 
 }

@@ -1,8 +1,10 @@
 package physics;
 
+import java.util.Arrays;
+
 public class VecMath {
     
-    public static double EPS = 0.0000001;
+    public static final double EPS = 0.0000001;
     
     public static double dist(Vector2d v, Edge e) {
         if (!inBoundingBox(v, e, 2)) {
@@ -55,43 +57,28 @@ public class VecMath {
      * @param l13 length of edge between 1st and 3rd point
      * @return position of 3rd point
      */
-    public static Vector2d thirdPoint(Vector2d f1, Vector2d f2, 
-            double l23, double l13, Vector2d guidePoint) {
-        double l12 = dist(f1, f2);
-        if (l13 > l12 + l23 || l12 > l13 + l23 | l23 > l12 + l13) {
+    public static Vector2d[] thirdPoint(Vector2d f1, Vector2d f2, 
+            double r1, double r2) {
+
+        double x1 = f1.x;
+        double x2 = f2.x;
+        double y1 = f1.y;
+        double y2 = f2.y;
+
+        double d = dist(f1, f2);
+        if (d < EPS) {
             return null;
-        } else {
-            double x1 = f1.x;
-            double x2 = f2.x;
-            double y1 = f1.y;
-            double y2 = f2.y;
-            
-            // we have x3 = a + b*y3
-            double a = ((l12 - l12) - (x1*x1 - x2*x2) - (y1*y1 - y2*y2)) / (2*x2 - 2*x1);
-            double b = -(2*y1 - 2*y2) / (2*x2 - 2*x1);
-            
-            // we have a2*y3^2 + b*y3 + c = 0
-            double a2 = (1 + b*b);
-            double b2 = (2*a*b + 2*b*x1 - 2*y1);
-            double c2 = (a*a - l13 -2*a*x1 + x1*x1 + y1*y1);
-            
-            if (Math.abs(a2) < 0) {
-                return null; // this shouldn't actually happen
-            }
-            
-            double[] y3 = solveQuadratic(a2, b2, c2);
-            if (y3 == null) {
-                return null;
-            }
-            double[] x3 = new double[] {a + b*y3[0], a + b*y3[1]};
-            Vector2d[] p3 = new Vector2d[] {new Vector2d(x3[0], y3[0]), 
-                    new Vector2d(x3[1], y3[1])};
-            
-            double d1 = dist(guidePoint, p3[0]);
-            double d2 = dist(guidePoint, p3[1]);
-            return d1 < d2 ? p3[0] : p3[1];
         }
         
+        double a=(r1*r1 - r2*r2 + d*d)/(2*d);
+        double h = Math.sqrt(r1*r1-a*a);
+        double xt = x1 + a*(x2-x1)/d;   
+        double yt = y1 + a*(y2-y1)/d;   
+        
+        double[] x3 = {xt+h*(y2-y1)/d, xt-h*(y2-y1)/d};
+        double[] y3 = {yt-h*(x2-x1)/d, yt+h*(x2-x1)/d};
+        
+        return new Vector2d[] {new Vector2d(x3[0], y3[0]), new Vector2d(x3[1], y3[1])};
     }
     
     public static double[] solveQuadratic(double a, double b, double c) {
@@ -132,5 +119,12 @@ public class VecMath {
     
     public static Vector2d mult(Vector2d v, double scalar) {
         return new Vector2d(v.x * scalar, v.y * scalar); 
+    }
+    
+    public static void main(String[] args) {
+        Vector2d c1 = new Vector2d(0, 0);
+        Vector2d c2 = new Vector2d(0, 0.00001);
+        System.out.println(Arrays.toString(thirdPoint(c1, c2, 
+                1, 1)));
     }
 }

@@ -96,16 +96,22 @@ public class Window {
             @Override
             public void mousePressed(MouseEvent e) {
                 Vector2d pos = new Vector2d(e.getX(), e.getY());
-                List<Edge> clickedEdges = state.body.edgesAt(pos, 10);
                 System.out.println("Woah! Clicked at: " +pos);
-                if (!clickedEdges.isEmpty()) {
-                    System.out.println("Clicked on edges: " +clickedEdges);
-                    state.selectedEdge = clickedEdges.get(0);
+                List<Vector2d> clickedPoints = state.body.pointsAt(pos, 10);
+                if (!clickedPoints.isEmpty() && !e.isControlDown()) {
+                    System.out.println("Clicked on points: " +clickedPoints);
+                    state.selectPoint(clickedPoints.get(0));
+                    return;
                 } else {
-                    state.selectedEdge = null;
+                    List<Edge> clickedEdges = state.body.edgesAt(pos, 10);
+                    if (!clickedEdges.isEmpty()) {
+                        System.out.println("Clicked on edges: " +clickedEdges);
+                        state.selectEdge(clickedEdges.get(0));
+                    } else {
+                        state.selectEdge(null);
+                    }
                 }
-            }
-            
+            }    
         });
         
         frame.addKeyListener(new KeyListener() {
@@ -118,14 +124,31 @@ public class Window {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                Edge sel = state.selectedEdge;
+                Edge selE = state.selectedEdge;
+                Vector2d selP = state.selectedPoint;
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    if (sel != null) {
-                        state.body.stretch(sel, 1.0);
+                    if (selE != null) {
+                        state.body.stretch(selE, 1.0);
+                    } else if (selP != null) {
+                        selP.y = (int)(selP.y - 1);
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    if (sel != null) {
-                        state.body.stretch(sel, -1.0);
+                    if (selE != null) {
+                        state.body.stretch(selE, -1.0);
+                    } else if (selP != null) {
+                        selP.y = (int)(selP.y - 1);
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    if (selP != null) {
+                        selP.x = (int)(selP.x + 1);
+                    }
+                }  else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    if (selP != null) {
+                        selP.x = (int)(selP.x - 1);
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    if (selP != null) {
+                        selP.fixed = !selP.fixed;
                     }
                 }
             }

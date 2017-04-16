@@ -7,9 +7,10 @@ public class Vector2d {
     public double x;
     public double y;
     
-    // render stuff
-    public Color color = Color.BLACK;
-    public int thickness = 10;
+    /**
+     * Point is prevented from moving.
+     */
+    public boolean fixed = false;
     
     public Vector2d(double x, double y) {
         this.x = x;
@@ -22,6 +23,18 @@ public class Vector2d {
     
     private static String format(double num) {
         return String.format("%.1f", num);
+    }
+    
+    public Color color() {
+        return Color.BLACK;
+    }
+    
+    public int thickness() {
+        if (fixed) {
+            return 20;
+        } else {
+            return 10;
+        }
     }
 
 }

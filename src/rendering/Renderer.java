@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
+import java.util.Set;
 
 import IO.State;
 import physics.Body;
@@ -14,6 +15,7 @@ import physics.Vector2d;
 public class Renderer {
     
     public static Color SELECTED_COLOR = Color.RED;
+    public static Color FIXED_COLOR = Color.GREEN;
     
     public static void render(Graphics2D g, RenderOptions options, State state) {
         Body body = state.body;
@@ -24,6 +26,8 @@ public class Renderer {
         
         int xOffs = options.drawRect.x;
         int yOffs = options.drawRect.y;
+        
+        Set<Vector2d> currentFixed = state.body.getDerivedFixedPoints();
         
         for (Edge e : body.edges) {
             if (state.selectedEdge == e) {
@@ -39,11 +43,13 @@ public class Renderer {
         for (Vector2d p : body.adj.keySet()) {
             if (state.selectedPoint == p) {
                 g.setColor(SELECTED_COLOR);
+            } else if (currentFixed.contains(p)){
+                g.setColor(FIXED_COLOR);
             } else {
-                g.setColor(p.color);
+                g.setColor(p.color());
             }
             
-            int diam = p.thickness;
+            int diam = p.thickness();
             g.fillOval((int)(p.x - diam/2) - xOffs, 
                     (int)(p.y - diam/2) - yOffs, diam, diam);
         }

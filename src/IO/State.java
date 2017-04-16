@@ -10,6 +10,16 @@ public class State {
     public Edge selectedEdge = null;
     public Vector2d selectedPoint = null;
     
+    public void selectEdge(Edge e) {
+        selectedEdge = e;
+        selectedPoint = null;
+    }
+    
+    public void selectPoint(Vector2d p) {
+        selectedEdge = null;
+        selectedPoint = p;
+    }
+    
     
     
 

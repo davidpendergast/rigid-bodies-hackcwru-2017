@@ -136,19 +136,17 @@ public class Body {
             e1 += getError(e);
         }
 
-        QuadraticFunction[] f = getConstraintFunctions();
-        int n = points().size();
-        double[] x0 = new double[n * 2];
-        for (Vector2d p : points()) {
-            int i = id.get(p);
-            x0[i] = p.x;
-            x0[i + n] = p.y;
-        }
-        double[] soln = FuncSystemSolver.solve(f, x0);
-        double e2 = FuncSystemSolver.err(f, soln);
+//        QuadraticFunction[] f = getConstraintFunctions();
+//        int n = points().size();
+//        double[] x0 = new double[n * 2];
+//        for (Vector2d p : points()) {
+//            int i = id.get(p);
+//            x0[i] = p.x;
+//            x0[i + n] = p.y;
+//        }
+//        double[] soln = FuncSystemSolver.solve(f, x0);
+//        double e2 = FuncSystemSolver.err(f, soln);
         
-        System.out.println("e_list error: "+e1);
-        System.out.println("Constraint function error: "+e2);
         return e1;
     }
     

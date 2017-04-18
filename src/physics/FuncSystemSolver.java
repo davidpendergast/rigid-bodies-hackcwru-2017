@@ -6,7 +6,7 @@ import Jama.Matrix;
 
 public class FuncSystemSolver {
     
-    public static int iters = 50;
+    public static int iters = 20;
     
     /**
      * Returns the vector x that minimizes the magnitude of 
@@ -14,7 +14,6 @@ public class FuncSystemSolver {
      */
     public static double[] solve(Func[] f, final double[] x0) {
         double err = err(f, x0);
-        //System.out.println("initial err = " + err);
         
         int n = f.length;
         Func[] f_copy = new Func[n + x0.length];
@@ -35,7 +34,7 @@ public class FuncSystemSolver {
         for (int i = 0; i < x.length; i++) {
             x[i] += (Math.random()-0.5)*0.001;
         }
-        for (int i = 0; i < iters; i++) {
+        for (int i = 0; i < iters && err > 0.01; i++) {
             Matrix Df_mat = eval(Df, x);
             Matrix f_mat = eval(f, x);
             f_mat = f_mat.times(-1);
@@ -46,7 +45,7 @@ public class FuncSystemSolver {
                 x[j] += x_delta.get(j, 0);
             }
             
-            // System.out.println("iteration "+i+" err = "+err(f, x));
+            err = err(f, x0);
         }
         
         System.out.println("err = "+err(f, x));

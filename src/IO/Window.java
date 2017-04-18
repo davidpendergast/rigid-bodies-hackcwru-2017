@@ -132,6 +132,7 @@ public class Window {
                 Point releasePos = e.getPoint();
                 
                 if (downPos != null && e.getButton() == MouseEvent.BUTTON1) {
+                    
                     List<Vector2d> clickedPoints = state.body.pointsAt(
                             new Vector2d(downPos.getX(), downPos.getY()), 10);
                     List<Vector2d> releasePoints = state.body.pointsAt(
@@ -140,8 +141,10 @@ public class Window {
                     if (!clickedPoints.isEmpty() && !releasePoints.isEmpty()) {
                         Vector2d p1 = clickedPoints.get(0);
                         Vector2d p2 = releasePoints.get(0);
-                        Edge edge = new Edge(p1, p2);
-                        state.body.add(edge);
+                        if (p1 != p2) {
+                            Edge edge = new Edge(p1, p2);
+                            state.body.add(edge);
+                        }
                     }
                 }
             }
@@ -183,6 +186,8 @@ public class Window {
                     if (selP != null) {
                         selP.fixed = !selP.fixed;
                     }
+                } else if (e.getKeyCode() == KeyEvent.VK_R) {
+                    state.body.resetPreferedLengths();
                 }
             }
 

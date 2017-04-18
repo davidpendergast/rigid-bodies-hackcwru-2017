@@ -36,7 +36,7 @@ public class Body {
         return res;
     }
     
-    public void updatePreferedLengths() {
+    public void resetPreferedLengths() {
         for (Edge e : edges) {
             preferedLengths.put(e, e.length());
         }
@@ -94,68 +94,62 @@ public class Body {
     public void stretch(Edge e, double delta) {
         double currLen = e.length();
         preferedLengths.put(e, currLen + delta);
-        
-        if (!USE_SPRINGS) {
-            QuadraticFunction[] f = getConstraintFunctions();
-            int n = points().size();
-            double[] x0 = new double[n * 2];
-            for (Vector2d p : points()) {
-                int i = id.get(p);
-                x0[i] = p.x;
-                x0[i + n] = p.y;
-            }
-            double[] soln = FuncSystemSolver.solve(f, x0);
-            if (FuncSystemSolver.err(f, soln) > 1) {
-                // bad solution, not doing anything.
-            } else {
-                for (Vector2d p : points()) {
-                    int i = id.get(p);
-                    p.x = soln[i];
-                    p.y = soln[i + n];
-                }
-            }
-            
-            updatePreferedLengths();
-        }
     }
     
-    public void update(double scale) {
-        if (!USE_SPRINGS) {
+    public void update() {
+        if (!needsUpdate()) {
             return;
         }
-        List<Vector2d> myGuys = new ArrayList<Vector2d>();
-        myGuys.addAll(points());
-        Collections.shuffle(myGuys);
-        Map<Vector2d,Vector2d> newPos = new HashMap<Vector2d,Vector2d>();
-        for (Vector2d p : myGuys) {
-            if (p.fixed) {
-                newPos.put(p, p);
-            } else {
-                Vector2d correction = new Vector2d(0, 0);
-                for (Edge e : toEdge.get(p)) {
-                    double err = getError(e);
-                    if (Math.abs(err) > 0.5) {
-                        Vector2d other = e.other(p);
-                        Vector2d dir = VecMath.mult(VecMath.sub(other, p), 1.0 / e.length());
-                        correction = VecMath.add(correction, VecMath.mult(dir, -err * scale / 2));
-                    }
-                }
-                double mag = VecMath.mag(correction);
-                if (mag > 5) {
-                    correction = VecMath.mult(correction, 2 / mag);
-                }
-                newPos.put(p, VecMath.add(p, correction));
+        QuadraticFunction[] f = getConstraintFunctions();
+        int n = points().size();
+        double[] x0 = new double[n * 2];
+        for (Vector2d p : points()) {
+            int i = id.get(p);
+            x0[i] = p.x;
+            x0[i + n] = p.y;
+        }
+        double[] soln = FuncSystemSolver.solve(f, x0);
+        if (FuncSystemSolver.err(f, soln) > edges.size()/2) {
+            // bad solution, not doing anything.
+        } else {
+            for (Vector2d p : points()) {
+                int i = id.get(p);
+                p.x = soln[i];
+                p.y = soln[i + n];
             }
         }
         
-        for(Vector2d p : newPos.keySet()) {
-            p.x = newPos.get(p).x;
-            p.y = newPos.get(p).y;
-        }
+        resetPreferedLengths();
+    }
+    
+    public boolean needsUpdate() {
+        return getError() > 0.1;
     }
     
     public double getError(Edge e) {
-        return preferedLengths.get(e) - e.length();
+        return Math.abs(preferedLengths.get(e) - e.length());
+    }
+    
+    public double getError() {
+        double e1 = 0;
+        for (Edge e : edges) {
+            e1 += getError(e);
+        }
+
+        QuadraticFunction[] f = getConstraintFunctions();
+        int n = points().size();
+        double[] x0 = new double[n * 2];
+        for (Vector2d p : points()) {
+            int i = id.get(p);
+            x0[i] = p.x;
+            x0[i + n] = p.y;
+        }
+        double[] soln = FuncSystemSolver.solve(f, x0);
+        double e2 = FuncSystemSolver.err(f, soln);
+        
+        System.out.println("e_list error: "+e1);
+        System.out.println("Constraint function error: "+e2);
+        return e1;
     }
     
     public Set<Vector2d> getFixedPoints() {

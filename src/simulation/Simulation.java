@@ -27,18 +27,15 @@ public class Simulation {
         state.body.add(new Edge(v2, v3));
         state.body.add(new Edge(v2, v4));
         
-//        state.body.add(new Edge(v2, v4));
-//        state.body.add(new Edge(v3, v4));
-        
         Window window = new Window(state, 600, 400);
         RenderOptions opts = new RenderOptions();
         
         while (true) {
-            sleep(100);
+            sleep(20);
             Graphics2D g = window.getGraphics();
             Renderer.render(g, opts, state);
             window.repaint();
-            state.body.update(1.0);
+            state.body.update();
         }
     }
     

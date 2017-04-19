@@ -48,7 +48,9 @@ public class FuncSystemSolver {
             err = err(f, x0);
         }
         
-        System.out.println("err = "+err(f, x));
+        if (err > 0.01) {
+            System.out.println("err = "+err(f, x));
+        }
         return x;
     }
     

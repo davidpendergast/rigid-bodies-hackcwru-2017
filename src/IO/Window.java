@@ -17,7 +17,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -42,6 +46,10 @@ public class Window {
     
     public Point mouseDownPos = null;
     public Point mouseCurrPos = null;
+    
+    private Object keyStateLock = new Object();
+    public Set<Integer> heldKeys = new HashSet<Integer>();
+    public Set<Integer> newlyPressedKeys = new HashSet<Integer>();
 
     public Window(State state, int width, int height) {
         this.state = state;
@@ -160,41 +168,23 @@ public class Window {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                Edge selE = state.selectedEdge;
-                Vector2d selP = state.selectedPoint;
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    if (selE != null) {
-                        state.body.stretch(selE, stretchSpeed);
-                    } else if (selP != null) {
-                        selP.y = (int)(selP.y - 1);
+                int key = e.getKeyCode();
+                synchronized (keyStateLock) {
+                    if (!heldKeys.contains(key)) {
+                        newlyPressedKeys.add(key);
+                        heldKeys.add(key);
                     }
-                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    if (selE != null) {
-                        state.body.stretch(selE, -stretchSpeed);
-                    } else if (selP != null) {
-                        selP.y = (int)(selP.y + moveSpeed);
-                    }
-                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    if (selP != null) {
-                        selP.x = (int)(selP.x + moveSpeed);
-                    }
-                }  else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    if (selP != null) {
-                        selP.x = (int)(selP.x - moveSpeed);
-                    }
-                } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    if (selP != null) {
-                        selP.fixed = !selP.fixed;
-                    }
-                } else if (e.getKeyCode() == KeyEvent.VK_R) {
-                    state.body.resetPreferedLengths();
                 }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                // TODO Auto-generated method stub
-                
+                int key = e.getKeyCode();
+                synchronized (keyStateLock) {
+                    if (heldKeys.contains(key)) {
+                        heldKeys.remove(key);
+                    }
+                }
             }
             
         });
@@ -213,6 +203,52 @@ public class Window {
             }
             
         });
+    }
+    
+    public void handleInputs() {
+        Edge selE = state.selectedEdge;
+        Vector2d selP = state.selectedPoint;
+        
+        synchronized (keyStateLock) {
+            if (heldKeys.contains(KeyEvent.VK_UP)) {
+                if (selE != null) {
+                    state.body.stretch(selE, stretchSpeed);
+                } else if (selP != null) {
+                    selP.y = (int)(selP.y - 1);
+                }
+            }
+            
+            if (heldKeys.contains(KeyEvent.VK_DOWN)) {
+                if (selE != null) {
+                    state.body.stretch(selE, -stretchSpeed);
+                } else if (selP != null) {
+                    selP.y = (int)(selP.y + moveSpeed);
+                }
+            }
+            
+            if (heldKeys.contains(KeyEvent.VK_RIGHT)) {
+                if (selP != null) {
+                    selP.x = (int)(selP.x + moveSpeed);
+                }
+            } 
+            if (heldKeys.contains(KeyEvent.VK_LEFT)) {
+                if (selP != null) {
+                    selP.x = (int)(selP.x - moveSpeed);
+                }
+            } 
+            
+            if (newlyPressedKeys.contains(KeyEvent.VK_ENTER)) {
+                if (selP != null) {
+                    selP.fixed = !selP.fixed;
+                }
+            } 
+            
+            if (newlyPressedKeys.contains(KeyEvent.VK_R)) {
+                state.body.resetPreferedLengths();
+            }
+            
+            newlyPressedKeys.clear();
+        }
     }
 
 }

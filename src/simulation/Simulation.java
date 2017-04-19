@@ -32,6 +32,7 @@ public class Simulation {
         
         while (true) {
             sleep(20);
+            window.handleInputs();
             Graphics2D g = window.getGraphics();
             Renderer.render(g, opts, state);
             window.repaint();

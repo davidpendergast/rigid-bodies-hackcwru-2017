@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Body {
@@ -76,13 +77,23 @@ public class Body {
         }
     }
     
+    private void reassignPointIds() {
+        List<Vector2d> allPoints = adj.keySet().stream().collect(Collectors.toList());
+        id.clear();
+        for (int i = 0; i < allPoints.size(); i++) {
+            id.put(allPoints.get(i), i);
+        }
+    }
+    
     public void remove(Vector2d point) {
-        for (Edge e : toEdge.get(point)) {
+        for (Edge e : new ArrayList<Edge>(toEdge.get(point))) {
             remove(e);
         }
         adj.remove(point);
         toEdge.remove(point);
         id.remove(point);
+        
+        reassignPointIds();
     }
     
     public List<Vector2d> neighbors(Vector2d point) {

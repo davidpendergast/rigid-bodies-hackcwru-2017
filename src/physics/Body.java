@@ -56,7 +56,12 @@ public class Body {
     }
     
     public void remove(Edge edge) {
-        
+        edges.remove(edge);
+        preferedLengths.remove(edge);
+        toEdge.get(edge.p1).remove(edge);
+        toEdge.get(edge.p2).remove(edge);
+        adj.get(edge.p1).remove(edge.p2);
+        adj.get(edge.p2).remove(edge.p1);
     }
 
     public void add(Vector2d point) {

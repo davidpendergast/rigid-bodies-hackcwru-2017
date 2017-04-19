@@ -201,7 +201,7 @@ public class Window {
                 if (selE != null) {
                     state.body.stretch(selE, stretchSpeed);
                 } else if (selP != null) {
-                    selP.y = (int)(selP.y - 1);
+                    selP.y = (int)(selP.y - moveSpeed);
                 }
             }
             
@@ -232,6 +232,13 @@ public class Window {
             
             if (newlyPressedKeys.contains(KeyEvent.VK_R)) {
                 state.body.resetPreferedLengths();
+            }
+            
+            if (newlyPressedKeys.contains(KeyEvent.VK_DELETE) 
+                    || newlyPressedKeys.contains(KeyEvent.VK_BACK_SPACE)) {
+                if (selE != null) {
+                    state.body.remove(selE);
+                }
             }
             
             newlyPressedKeys.clear();

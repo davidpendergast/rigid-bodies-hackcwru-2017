@@ -1,8 +1,6 @@
 package physics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +53,10 @@ public class Body {
         toEdge.get(edge.p2).add(edge);
         adj.get(edge.p1).add(edge.p2);
         adj.get(edge.p2).add(edge.p1);
+    }
+    
+    public void remove(Edge edge) {
+        
     }
 
     public void add(Vector2d point) {
@@ -131,23 +133,12 @@ public class Body {
     }
     
     public double getError() {
-        double e1 = 0;
+        double err = 0;
         for (Edge e : edges) {
-            e1 += getError(e);
+            err += getError(e);
         }
-
-//        QuadraticFunction[] f = getConstraintFunctions();
-//        int n = points().size();
-//        double[] x0 = new double[n * 2];
-//        for (Vector2d p : points()) {
-//            int i = id.get(p);
-//            x0[i] = p.x;
-//            x0[i + n] = p.y;
-//        }
-//        double[] soln = FuncSystemSolver.solve(f, x0);
-//        double e2 = FuncSystemSolver.err(f, soln);
         
-        return e1;
+        return err;
     }
     
     public Set<Vector2d> getFixedPoints() {

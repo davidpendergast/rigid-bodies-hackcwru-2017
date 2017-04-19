@@ -116,7 +116,7 @@ public class Body {
         if (!needsUpdate()) {
             return;
         }
-        QuadraticFunction[] f = getConstraintFunctions();
+        Polynomial[] f = getConstraintFunctions();
         int n = points().size();
         double[] x0 = new double[n * 2];
         for (Vector2d p : points()) {
@@ -161,8 +161,8 @@ public class Body {
                 .collect(Collectors.toSet());
     }
     
-    private QuadraticFunction[] getConstraintFunctions() {
-        List<QuadraticFunction> res = new ArrayList<QuadraticFunction>();
+    private Polynomial[] getConstraintFunctions() {
+        List<Polynomial> res = new ArrayList<Polynomial>();
         int n = adj.keySet().size();
         for (Edge e : edges) {
             int xi = Math.max(id.get(e.p1), id.get(e.p2));
@@ -171,29 +171,31 @@ public class Body {
             int yj = xj + n;
             double lij = preferedLengths.get(e);
             
-            QuadraticFunction f = new QuadraticFunction(n * 2);
-            f.set(xi, xi, 1);
-            f.set(xi, xj, -2);
-            f.set(xj, xj, 1);
-            f.set(yi, yi, 1);
-            f.set(yi, yj, -2);
-            f.set(yj, yj, 1);
+            Polynomial f = new Polynomial(n * 2);
+            f.set( 1, xi, xi);
+            f.set(-2, xi, xj);
+            f.set( 1, xj, xj);
+            f.set( 1, yi, yi);
+            f.set(-2, yi, yj);
+            f.set( 1, yj, yj);
             f.set(-lij*lij);
             res.add(f);
         }
         
         for (Vector2d p : adj.keySet()) {
             if (p.fixed) {
-                QuadraticFunction f1 = new QuadraticFunction(n * 2);
-                QuadraticFunction f2 = new QuadraticFunction(n * 2);
                 int xi = id.get(p);
-                f1.set(xi, -p.x);
-                f2.set(xi + n, -p.y);
+                Polynomial f1 = new Polynomial(n * 2);
+                f1.set(-p.x, xi);
                 res.add(f1);
+                
+                Polynomial f2 = new Polynomial(n * 2);
+                f2.set(-p.y, xi + n);
                 res.add(f2);
             }
         }
         
-        return res.toArray(new QuadraticFunction[0]);
+        System.out.println(res);
+        return res.toArray(new Polynomial[0]);
     }
 }

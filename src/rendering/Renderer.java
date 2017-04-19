@@ -30,14 +30,15 @@ public class Renderer {
             if (state.selectedEdge == e) {
                 g.setColor(SELECTED_COLOR);
             } else {
-                double err = Math.abs(state.body.getError(e));
-                if (err > 10) {
-                    err = 10;
-                }
-                
-                err = err / 10.0;
-                Color c = new Color((int)(255*err), (int)(255*(1-err)), 0);
-                g.setColor(c);
+//                double err = Math.abs(state.body.getError(e));
+//                if (err > 10) {
+//                    err = 10;
+//                }
+//                
+//                err = err / 10.0;
+//                Color c = new Color((int)(255*err), (int)(255*(1-err)), 0);
+//                g.setColor(c);
+                g.setColor(e.color);
             }
             g.setStroke(new BasicStroke(e.thickness));
             g.draw(new Line2D.Double(e.p1.x - xOffs, e.p1.y - yOffs, 
@@ -47,9 +48,8 @@ public class Renderer {
         for (Vector2d p : body.adj.keySet()) {
             if (state.selectedPoint == p) {
                 g.setColor(SELECTED_COLOR);
-            //} //else if (currentFixed.contains(p)){
-                g.setColor(FIXED_COLOR);
-            //} 
+            } else if (p.fixed){
+                g.setColor(FIXED_COLOR); 
             } else {
                 g.setColor(p.color());
             }

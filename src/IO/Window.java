@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -35,7 +34,7 @@ public class Window {
     public JPanel toolPanel;
     
     public int moveSpeed = 3;
-    public double stretchSpeed = 0.5;
+    public double stretchSpeed = 1.5;
     
     public Point mouseDownPos = null;
     public Point mouseCurrPos = null;

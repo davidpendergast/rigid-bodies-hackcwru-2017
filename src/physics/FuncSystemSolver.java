@@ -6,13 +6,15 @@ import Jama.Matrix;
 
 public class FuncSystemSolver {
     
-    public static int iters = 20;
+    public static double[] solve(Func[] f, final double[] x0) {
+        return solve(f, x0, 20, 0.01);
+    }
     
     /**
      * Returns the vector x that minimizes the magnitude of 
      * [f1(x), f2(x), ..., fn(x)]  while also minimizing |x - x0|.
      */
-    public static double[] solve(Func[] f, final double[] x0) {
+    public static double[] solve(Func[] f, final double[] x0, int maxIters, double errThreshold) {
         double err = err(f, x0);
         
         int n = f.length;
@@ -34,7 +36,7 @@ public class FuncSystemSolver {
         for (int i = 0; i < x.length; i++) {
             x[i] += (Math.random()-0.5)*0.001;
         }
-        for (int i = 0; i < iters && err > 0.01; i++) {
+        for (int i = 0; i < maxIters && err > errThreshold; i++) {
             Matrix Df_mat = eval(Df, x);
             Matrix f_mat = eval(f, x);
             f_mat = f_mat.times(-1);
@@ -48,9 +50,6 @@ public class FuncSystemSolver {
             err = err(f, x0);
         }
         
-        if (err > 0.01) {
-            System.out.println("err = "+err(f, x));
-        }
         return x;
     }
     
@@ -81,7 +80,6 @@ public class FuncSystemSolver {
     public static double err(Func[] f, double[] x) {
         double sum = 0;
         for (Func function : f) {
-            //System.out.println("f(x) = " + Math.abs(function.eval(x))+ " = " + function);
             sum += Math.abs(function.eval(x));
         }
         return sum;
@@ -109,13 +107,4 @@ public class FuncSystemSolver {
         return Df;
     }
     
-//    public static void main(String[] args) {
-//        Func f1 = x -> x[0]*x[2] - x[1]*3 + 2;
-//        Func f2 = x -> 7*x[0]*x[0]*x[2] + x[1]*x[0] + 4;
-//        
-//        Func[] f = {f1, f2};
-//        double[] x0 = {100,1, 1};
-//        double[] x = solve(f, x0);
-//        System.out.println(Arrays.toString(x));
-//    }
 }

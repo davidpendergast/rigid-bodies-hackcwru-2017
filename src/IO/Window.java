@@ -238,6 +238,8 @@ public class Window {
                     || newlyPressedKeys.contains(KeyEvent.VK_BACK_SPACE)) {
                 if (selE != null) {
                     state.body.remove(selE);
+                } else if (selP != null) {
+                    state.body.remove(selP);
                 }
             }
             

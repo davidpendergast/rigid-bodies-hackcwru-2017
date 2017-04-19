@@ -76,6 +76,15 @@ public class Body {
         }
     }
     
+    public void remove(Vector2d point) {
+        for (Edge e : toEdge.get(point)) {
+            remove(e);
+        }
+        adj.remove(point);
+        toEdge.remove(point);
+        id.remove(point);
+    }
+    
     public List<Vector2d> neighbors(Vector2d point) {
         if (toEdge.containsKey(point)) {
             return toEdge.get(point).stream()

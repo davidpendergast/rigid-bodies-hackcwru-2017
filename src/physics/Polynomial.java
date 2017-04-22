@@ -7,15 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Polynomial implements Func {
-    public int n;
+    public String name = null;
     
     public Map<List<Integer>, Double> coefficients;
     
     /**
      * @param n number of variables.
      */
-    public Polynomial(int n) {
-        this.n = n;
+    public Polynomial() {
         this.coefficients = new HashMap<List<Integer>, Double>();
     }
     

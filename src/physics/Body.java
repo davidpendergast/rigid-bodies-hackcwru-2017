@@ -182,7 +182,7 @@ public class Body {
             int yj = xj + n;
             double lij = preferedLengths.get(e);
             
-            Polynomial f = new Polynomial(n * 2);
+            Polynomial f = new Polynomial();
             f.set( 1, xi, xi);
             f.set(-2, xi, xj);
             f.set( 1, xj, xj);

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class Body {
     
-    public static boolean USE_SPRINGS = false;
+    public static double errorThresh = 1.0;
     
     public List<Edge> edges;
     public Map<Vector2d, Set<Edge>> toEdge;
@@ -134,9 +134,10 @@ public class Body {
             x0[i] = p.x;
             x0[i + n] = p.y;
         }
-        double[] soln = FuncSystemSolver.solve(f, x0);
-        if (FuncSystemSolver.err(f, soln) > edges.size()/2) {
-            // bad solution, not doing anything.
+        
+        double[] soln = FuncSystemSolver.solve(f, x0, 20, errorThresh);
+        if (soln == null) {
+            //System.out.println(FuncSystemSolver.err(f, soln));
         } else {
             for (Vector2d p : points()) {
                 int i = id.get(p);
@@ -149,7 +150,7 @@ public class Body {
     }
     
     public boolean needsUpdate() {
-        return getError() > 0.1;
+        return getError() > errorThresh;
     }
     
     public double getError(Edge e) {
@@ -192,18 +193,18 @@ public class Body {
             res.add(f);
         }
         
-        for (Vector2d p : adj.keySet()) {
-            if (p.fixed) {
-                int xi = id.get(p);
-                Polynomial f1 = new Polynomial(n * 2);
-                f1.set(-p.x, xi);
-                res.add(f1);
-                
-                Polynomial f2 = new Polynomial(n * 2);
-                f2.set(-p.y, xi + n);
-                res.add(f2);
-            }
-        }
+//        for (Vector2d p : adj.keySet()) {
+//            if (p.fixed) {
+//                int xi = id.get(p);
+//                Polynomial f1 = new Polynomial(n * 2);
+//                f1.set(-p.x, xi);
+//                res.add(f1);
+//                
+//                Polynomial f2 = new Polynomial(n * 2);
+//                f2.set(-p.y, xi + n);
+//                res.add(f2);
+//            }
+//        }
         
         return res.toArray(new Polynomial[0]);
     }

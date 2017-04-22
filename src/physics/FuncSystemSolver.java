@@ -6,36 +6,38 @@ import Jama.Matrix;
 
 public class FuncSystemSolver {
     
-    public static double[] solve(Func[] f, final double[] x0) {
-        return solve(f, x0, 20, 0.01);
+    public static double[] solve(Func[] f, double[] x0) {
+        return solve(f, x0, 200, 0.1);
     }
     
     /**
      * Returns the vector x that minimizes the magnitude of 
      * [f1(x), f2(x), ..., fn(x)]  while also minimizing |x - x0|.
      */
-    public static double[] solve(Func[] f, final double[] x0, int maxIters, double errThreshold) {
+    public static double[] solve(Func[] f, double[] x0, int maxIters, double errThreshold) {
         double err = err(f, x0);
         
+        // adding closeness to x0 constraints.
+        Func[] closeToX0 = getCloseToXConstraints(x0, 0.00001);
         int n = f.length;
-        Func[] f_copy = new Func[n + x0.length];
-        for (int i = 0; i < n; i++) {
-            f_copy[i] = f[i];
+        Func[] f_copy = new Func[n + closeToX0.length];
+        for (int i = 0; i < f_copy.length; i++) {
+            if (i < n) {
+                f_copy[i] = f[i];
+            } else {
+                f_copy[i] = closeToX0[i - n];
+            }
         }
         f = f_copy;
-        final double weight = 0.0001;
-        // adding closeness to x0 constraints.
-        for (int i = n; i < f.length; i++) {
-            final int j = i;
-            f[i] = x -> weight*(x[j-n] - x0[j-n]);
-        }
         
+        // building partial derivative matrix (jacobian).
         Func[][] Df = D(f, x0.length, 0.0001);
         
         double[] x = Arrays.copyOf(x0, x0.length);
         for (int i = 0; i < x.length; i++) {
             x[i] += (Math.random()-0.5)*0.001;
         }
+        
         for (int i = 0; i < maxIters && err > errThreshold; i++) {
             Matrix Df_mat = eval(Df, x);
             Matrix f_mat = eval(f, x);
@@ -47,10 +49,31 @@ public class FuncSystemSolver {
                 x[j] += x_delta.get(j, 0);
             }
             
-            err = err(f, x0);
+            err = err(f, n, x);
         }
         
-        return x;
+        err = err(f, n, x); // for breakpointing
+        
+        if (err <= errThreshold) {
+            return x;
+        } else {
+            System.out.println("Solver failed! err = "+err);
+            return null;
+        }
+    }
+    
+    private static Func[] getCloseToXConstraints(final double[] x0, final double weight) {
+          int n = x0.length;
+          Func[] f = new Func[n];
+
+          for (int i = 0; i < n; i++) {
+              final int j = i;
+              f[i] = x -> {
+                          return weight*(x[j] - x0[j]);
+                      };
+          }
+          
+          return f;
     }
     
     public static Matrix eval(Func[][] functs, double[] vars) {
@@ -78,12 +101,18 @@ public class FuncSystemSolver {
     }
     
     public static double err(Func[] f, double[] x) {
-        double sum = 0;
-        for (Func function : f) {
-            sum += Math.abs(function.eval(x));
-        }
-        return sum;
+        return err(f, f.length, x);
     }
+    
+    public static double err(Func[] f, int n, double[] x) {
+        double sum = 0;
+        for (int i = 0; i < n; i++) {
+            Func function = f[i];
+            double error = function.eval(x);
+            sum += error * error;
+        }
+        return Math.sqrt(sum);
+    } 
     
     public static Func d(Func f, int i, double h, double[] buffer) {
         return x -> {

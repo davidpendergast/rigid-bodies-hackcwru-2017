@@ -1,6 +1,8 @@
 package physics;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import Jama.Matrix;
 
@@ -58,6 +60,10 @@ public class FuncSystemSolver {
             return x;
         } else {
             System.out.println("Solver failed! err = "+err);
+            Func[] badFuncs = filterErrFuncs(f, x, 10);
+            for (Func bad : badFuncs) {
+                System.out.println(err(bad, x) + ": "+bad);
+            }
             return null;
         }
     }
@@ -113,6 +119,20 @@ public class FuncSystemSolver {
         }
         return Math.sqrt(sum);
     } 
+    
+    public static double err(Func f, double[] x) {
+        return Math.abs(f.eval(x));
+    }
+    
+    public static Func[] filterErrFuncs(Func[] f, double[] x, double err) {
+        List<Func> res = new ArrayList<Func>();
+        for (Func fun : f) {
+            if (err(fun, x) > err) {
+                res.add(fun);
+            }
+        }
+        return res.toArray(new Func[0]);
+    }
     
     public static Func d(Func f, int i, double h, double[] buffer) {
         return x -> {

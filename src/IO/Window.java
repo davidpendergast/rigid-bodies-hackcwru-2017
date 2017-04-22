@@ -33,7 +33,7 @@ public class Window {
     public JPanel imagePanel;
     public JPanel toolPanel;
     
-    public int moveSpeed = 3;
+    public double moveSpeed = 3;
     public double stretchSpeed = 1.5;
     
     public Point mouseDownPos = null;
@@ -200,7 +200,7 @@ public class Window {
                 if (selE != null) {
                     state.body.stretch(selE, stretchSpeed);
                 } else if (selP != null) {
-                    selP.y = (int)(selP.y - moveSpeed);
+                    selP.y = (selP.y - moveSpeed);
                 }
             }
             
@@ -208,18 +208,18 @@ public class Window {
                 if (selE != null) {
                     state.body.stretch(selE, -stretchSpeed);
                 } else if (selP != null) {
-                    selP.y = (int)(selP.y + moveSpeed);
+                    selP.y = (selP.y + moveSpeed);
                 }
             }
             
             if (heldKeys.contains(KeyEvent.VK_RIGHT)) {
                 if (selP != null) {
-                    selP.x = (int)(selP.x + moveSpeed);
+                    selP.x = (selP.x + moveSpeed);
                 }
             } 
             if (heldKeys.contains(KeyEvent.VK_LEFT)) {
                 if (selP != null) {
-                    selP.x = (int)(selP.x - moveSpeed);
+                    selP.x = (selP.x - moveSpeed);
                 }
             } 
             
@@ -231,6 +231,10 @@ public class Window {
             
             if (newlyPressedKeys.contains(KeyEvent.VK_R)) {
                 state.body.resetPreferedLengths();
+            }
+            
+            if (newlyPressedKeys.contains(KeyEvent.VK_E)) {
+                System.out.println("Current error: " + state.body.getError()); 
             }
             
             if (newlyPressedKeys.contains(KeyEvent.VK_DELETE) 

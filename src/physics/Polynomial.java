@@ -47,6 +47,10 @@ public class Polynomial implements Func {
     }
     
     public String toString() {
+        if (name != null) {
+            return name;
+        }
+        
         StringBuilder sb = new StringBuilder();
         for (List<Integer> vars : coefficients.keySet()) {
             double coeff = coefficients.get(vars);

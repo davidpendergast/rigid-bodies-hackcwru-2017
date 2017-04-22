@@ -190,21 +190,9 @@ public class Body {
             f.set(-2, yi, yj);
             f.set( 1, yj, yj);
             f.set(-lij*lij);
+            f.name = "Constraint for " + e;
             res.add(f);
         }
-        
-//        for (Vector2d p : adj.keySet()) {
-//            if (p.fixed) {
-//                int xi = id.get(p);
-//                Polynomial f1 = new Polynomial(n * 2);
-//                f1.set(-p.x, xi);
-//                res.add(f1);
-//                
-//                Polynomial f2 = new Polynomial(n * 2);
-//                f2.set(-p.y, xi + n);
-//                res.add(f2);
-//            }
-//        }
         
         return res.toArray(new Polynomial[0]);
     }

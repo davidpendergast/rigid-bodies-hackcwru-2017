@@ -113,6 +113,15 @@ public class VecMath {
         }
     }
     
+    public static Vector2d rotate(Vector2d v, Vector2d pivot, double rads) {
+        Vector2d dir = sub(v, pivot);
+        double sin = Math.sin(rads);
+        double cos = Math.cos(rads);
+        double x = dir.x*cos - dir.y*sin;
+        double y = dir.x*sin + dir.y*cos;
+        return new Vector2d(pivot.x + x, pivot.y + y);
+    }
+    
     public static double mag(Vector2d v) {
         return Math.sqrt(v.x*v.x + v.y*v.y);
     }

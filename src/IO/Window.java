@@ -35,6 +35,7 @@ public class Window {
     
     public double moveSpeed = 3;
     public double stretchSpeed = 1.5;
+    public double rotateSpeed = 0.1;
     
     public Point mouseDownPos = null;
     public Point mouseCurrPos = null;
@@ -215,11 +216,15 @@ public class Window {
             if (heldKeys.contains(KeyEvent.VK_RIGHT)) {
                 if (selP != null) {
                     selP.x = (selP.x + moveSpeed);
+                } else if (selE != null) {
+                    selE.rotate(rotateSpeed);
                 }
             } 
             if (heldKeys.contains(KeyEvent.VK_LEFT)) {
                 if (selP != null) {
                     selP.x = (selP.x - moveSpeed);
+                } else if (selE != null) {
+                    selE.rotate(-rotateSpeed);
                 }
             } 
             

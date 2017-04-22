@@ -51,6 +51,14 @@ public class Edge {
         return VecMath.midpoint(p1, p2);
     }
     
+    public void rotate(double rads) {
+        Vector2d pivot = midpoint();
+        Vector2d newP1 = VecMath.rotate(p1, pivot, rads);
+        Vector2d newP2 = VecMath.rotate(p2, pivot, rads);
+        p1.set(newP1);
+        p2.set(newP2);
+    }
+    
     public String toString() {
         return "Edge:" + p1 + " " + p2;
     }

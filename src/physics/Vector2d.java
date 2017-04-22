@@ -17,6 +17,16 @@ public class Vector2d {
         this.y = y;
     }
     
+    public Vector2d(Vector2d v) {
+        this(v.x, v.y);
+        this.fixed = v.fixed;
+    }
+    
+    public void set(Vector2d v) {
+        this.x = v.x;
+        this.y = v.y;
+    }
+    
     public String toString() {
         return "(" + format(x) + ", " + format(y) + ")";
     }
